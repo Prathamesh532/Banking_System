@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-// import axios from "axios";
+import axios from "axios";
+import { Navigate } from "react-router-dom";
+import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Regsiter = () => {
   const [username, setUsername] = useState("");
@@ -8,36 +11,39 @@ const Regsiter = () => {
   const [accountType, setAccountType] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
   const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
-      // const response = await fetch("http://localhost:5000/auth/register", {
-      //   username,
-      //   email,
-      //   password,
-      // });
-
-      const response = await fetch("http://localhost:5000/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
+      await axios.post('http://localhost:5000/register', {
+        username,
+        email,
+        accountType,
+        password,
       });
-
-      const data = await response.json();
-      console.log(data)
-
-      // console.log("Registration successful", response.data);
+      console.log('Registration successful');
+      alert("Registeration Successful...");
+      navigate("/");
+      
     } catch (error) {
-      console.error("Registration failed:", error.response.data);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        const errorMessage = error.response.data.message;
+        alert(errorMessage); // Display the error message in an alert box
+        console.error('Registration failed', errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received from the server');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error setting up the request', error.message);
+      }
     }
   };
+
 
   return (
     <div className="container">

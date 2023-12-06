@@ -4,47 +4,69 @@ import "./style.css";
 import Regsiter from "./src/pages/Regsiter";
 import UserLogin from "./src/pages/UserLogin";
 import {
-  RouterProvider,
-  createBrowserRouter,
-  Outlet,
-  Router,
+  BrowserRouter as Router,
   Route,
   Routes,
+  Outlet,
 } from "react-router-dom";
 import Footer from "./src/components/Footer";
 import Header from "./src/components/Header";
 import BankerLogin from "./src/pages/BankerLogin";
+import Transaction from "./src/pages/Transaction";
+
+// const App = () => {
+//   return (
+//     <>
+//       <Header />
+//       <Outlet />
+//       <Footer />
+//     </>
+//   );
+// };
+
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App />,
+//     children: [
+//       {
+//         path: "userlogin",
+//         element: <UserLogin />,
+//         children:[
+//           {
+//             path: "transcation",
+//             element: <Transaction />,
+//           }
+//         ]
+//       },
+//       {
+//         path: "/register",
+//         element: <Regsiter />,
+//       },
+//       {
+//         path: "bankerlogin",
+//         element: <BankerLogin />,
+//       }
+//     ],
+//   },
+// ]);
 
 const App = () => {
   return (
     <>
       <Header />
-      <Outlet />
+      <Routes>
+        <Route path="/" element={<Outlet />}>
+          <Route path="/" element={<UserLogin />} />
+          <Route path="bankerlogin" element={<BankerLogin />} />
+        </Route>
+        <Route path="/register" element={<Regsiter />} />
+        <Route path="/transaction" element={<Transaction />} />
+      </Routes>
       <Footer />
     </>
   );
 };
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      {
-        path: "/",
-        element: <UserLogin />,
-      },
-      {
-        path: "register",
-        element: <Regsiter />,
-      },
-      {
-        path: "bankerlogin",
-        element: <BankerLogin />,
-      }
-    ],
-  },
-]);
 
 // const router = createBrowserRouter([
 //   {
@@ -64,4 +86,8 @@ const router = createBrowserRouter([
 // ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<RouterProvider router={router} />);
+root.render(
+  <Router>
+    <App />
+  </Router>
+);

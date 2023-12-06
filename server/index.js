@@ -1,35 +1,38 @@
-const mongoose = require("mongoose");
-const express = require("express");
-const cors = require("cors");
-const authRoutes = require("./routes/authRoutes");
+// server/index.js
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const { registerUser, loginUser } = require('./controllers/authController.js'); // Update import
+const transactionController = require('./routes/authRoutes.js'); // Add importrequire('dotenv').config();
 
-const mongoDBAtlasUri =
-  "mongodb+srv://kalekarprathamesh130:Prathamesh@cluster0.3xmdq1n.mongodb.net/Bank?retryWrites=true&w=majority";
-
-mongoose.connect(mongoDBAtlasUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-
-db.on("error", (error) => {
-  console.error("MongoDB connection error:", error);
-});
-
-db.once("open", () => {
-  console.log("Connected to MongoDB");
-});
 
 const app = express();
-const port = 5000;
+const PORT = 5000;
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-// Routes
-app.use("/auth", authRoutes);
+const mongoDBAtlasUri = process.env.MONGODB_URL
+  
+mongoose.connect(mongoDBAtlasUri, {
+  // useNewUrlParser: true,
+  // useUnifiedTopology: true,
+});
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// Listen for the open event
+mongoose.connection.once('open', () => {
+  console.log('MongoDB connection successful');
+});
+
+// Listen for the error event
+mongoose.connection.on('error', (error) => {
+  console.error('MongoDB connection error:', error);
+});
+
+app.post('/register', registerUser);
+app.post('/', loginUser);
+app.use('/transaction', transactionController);
+
+app.listen(PORT, function () {
+  console.log('Server is running on port ' + PORT);
 });
